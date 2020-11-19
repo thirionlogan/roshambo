@@ -29,7 +29,7 @@ class Player {
     ) {
       console.log(`~${player2.name} wins.~`);
     } else {
-      console.log(`There was an issue`);
+      console.log(`Invalid move!`);
     }
   }
 }
