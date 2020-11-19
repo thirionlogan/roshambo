@@ -11,27 +11,34 @@ class Player {
 
   static moveSet = ["rock", "paper", "scissors"];
 
+  static doesPlayerWin(winner, loser) {
+    if (typeof winner !== "number" || typeof loser !== "number") {
+      throw new TypeError("Invalid move!");
+    }
+    return winner - loser < -1 || (winner > loser && winner * loser > -1);
+  }
+
   static compareMoves(player1, player2) {
+    if (player1 instanceof Player || player2 instanceof Player) {
+      throw new TypeError("Invalid Player!");
+    }
+
     const player1MoveIndex = Player.moveSet.indexOf(player1.move) - 1;
     const player2MoveIndex = Player.moveSet.indexOf(player2.move) - 1;
 
     if (player1MoveIndex === player2MoveIndex) {
       console.log("~This round is a tie~");
-    } else if (
-      player1MoveIndex - player2MoveIndex < -1 ||
-      (player1MoveIndex > player2MoveIndex &&
-        player1MoveIndex * player2MoveIndex > -1)
-    ) {
+    } else if (doesPlayerWin(player1MoveIndex, player2MoveIndex)) {
       console.log(`~${player1.name} wins.~`);
-    } else if (
-      player2MoveIndex - player1MoveIndex < -1 ||
-      (player2MoveIndex > player1MoveIndex &&
-        player1MoveIndex * player2MoveIndex > -1)
-    ) {
+    } else if (doesPlayerWin(player2MoveIndex, player1MoveIndex)) {
       console.log(`~${player2.name} wins.~`);
     } else {
       throw new Error("Unexpected Error occured!");
     }
+  }
+
+  static [Symbol.hasInstance](obj) {
+    if (obj.moveSet) return true;
   }
 }
 
