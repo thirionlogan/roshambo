@@ -14,6 +14,7 @@ class Player {
   static compareMoves(player1, player2) {
     const player1MoveIndex = Player.moveSet.indexOf(player1.move) - 1;
     const player2MoveIndex = Player.moveSet.indexOf(player2.move) - 1;
+
     if (player1MoveIndex === player2MoveIndex) {
       console.log("~This round is a tie~");
     } else if (
@@ -29,7 +30,7 @@ class Player {
     ) {
       console.log(`~${player2.name} wins.~`);
     } else {
-      console.log(`Invalid move!`);
+      throw new Error("Unexpected Error occured!");
     }
   }
 }
@@ -37,6 +38,8 @@ class Player {
 class HumanPlayer extends Player {
   constructor() {
     super("Player", argv.move);
+    if (Player.moveSet.indexOf(argv.move) === -1)
+      throw new TypeError("Invalid move!");
   }
 }
 
