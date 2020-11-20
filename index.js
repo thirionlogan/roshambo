@@ -9,13 +9,44 @@ class Player {
     console.log(`${name} plays ${move}`);
   }
 
-  static moveSet = ["rock", "paper", "scissors"];
+  // static moveset = {
+  //   // move: [moves that beat move]
+  //   rock: ["paper"],
+  //   paper: ["scissors"],
+  //   scissors: ["rock"],
+  // };
 
-  static doesPlayerWin(winner, loser) {
-    if (typeof winner !== "number" || typeof loser !== "number") {
-      throw new TypeError("Invalid move!");
-    }
-    return winner - loser < -1 || (winner > loser && winner * loser > -1);
+  // static moveSet = {
+  //   // move: [moves that beat move]
+  //   rock: ["paper", "spock"],
+  //   paper: ["scissors", "lizard"],
+  //   scissors: ["rock", "spock"],
+  //   lizard: ["scissors", "rock"],
+  //   spock: ["paper", "lizard"],
+  // };
+
+  static moveSet = {
+    tree: ["lightning", "gun", "rock", "fire", "scissors", "snake", "human"],
+    wolf: ["gun", "rock", "fire", "scissors", "snake", "human", "tree"],
+    sponge: ["rock", "fire", "scissors", "snake", "human", "tree", "wolf"],
+    paper: ["fire", "scissors", "snake", "human", "tree", "wolf", "sponge"],
+    air: ["scissors", "snake", "human", "tree", "wolf", "sponge", "paper"],
+    water: ["snake", "human", "tree", "wolf", "sponge", "paper", "air"],
+    dragon: ["human", "tree", "wolf", "sponge", "paper", "air", "water"],
+    devil: ["tree", "wolf", "sponge", "paper", "air", "water", "dragon"],
+    lightning: ["wolf", "sponge", "paper", "air", "water", "dragon", "devil"],
+    gun: ["sponge", "paper", "air", "water", "dragon", "devil", "lightning"],
+    rock: ["paper", "air", "water", "dragon", "devil", "lightning", "gun"],
+    fire: ["air", "water", "dragon", "devil", "lightning", "gun", "rock"],
+    scissors: ["water", "dragon", "devil", "lightning", "gun", "rock", "fire"],
+    snake: ["dragon", "devil", "lightning", "gun", "rock", "fire", "scissors"],
+    human: ["devil", "lightning", "gun", "rock", "fire", "scissors", "snake"],
+  };
+
+  static listRules() {
+    Object.entries(Player.moveSet).forEach((move) => {
+      console.log(`${move[0]} is beat by ${move[1].join(", ")}.`);
+    });
   }
 
   static compareMoves(player1, player2) {
@@ -23,14 +54,11 @@ class Player {
       throw new TypeError("Invalid Player!");
     }
 
-    const player1MoveIndex = Player.moveSet.indexOf(player1.move) - 1;
-    const player2MoveIndex = Player.moveSet.indexOf(player2.move) - 1;
-
-    if (player1MoveIndex === player2MoveIndex) {
+    if (player1.move === player2.move) {
       console.log("~This round is a tie~");
-    } else if (doesPlayerWin(player1MoveIndex, player2MoveIndex)) {
+    } else if (Player.moveSet[player2.move].includes(player1.move)) {
       console.log(`~${player1.name} wins.~`);
-    } else if (doesPlayerWin(player2MoveIndex, player1MoveIndex)) {
+    } else if (Player.moveSet[player1.move].includes(player2.move)) {
       console.log(`~${player2.name} wins.~`);
     } else {
       throw new Error("Unexpected Error occured!");
@@ -44,18 +72,24 @@ class Player {
 
 class HumanPlayer extends Player {
   constructor() {
-    super("Player", argv.move);
-    if (Player.moveSet.indexOf(argv.move) === -1)
+    if (!(argv.move.toLowerCase() in Player.moveSet))
       throw new TypeError("Invalid move!");
+    super("Player", argv.move.toLowerCase());
   }
 }
 
 class ComputerPlayer extends Player {
   constructor() {
-    super("Computer", Player.moveSet[Math.floor(Math.random() * 3)]);
+    const moves = Object.keys(Player.moveSet);
+    super("Computer", moves[Math.floor(Math.random() * moves.length)]);
   }
 }
 
-const human = new HumanPlayer();
-const computer = new ComputerPlayer();
-Player.compareMoves(human, computer);
+if (argv.listRules || argv.listrules || argv.help || argv.Help) {
+  Player.listRules();
+}
+if (argv.move) {
+  const human = new HumanPlayer();
+  const computer = new ComputerPlayer();
+  Player.compareMoves(human, computer);
+}
