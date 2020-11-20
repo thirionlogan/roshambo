@@ -81,7 +81,7 @@ class Player {
   }
 
   static [Symbol.hasInstance](obj) {
-    if (obj.moveSet) return true;
+    if (obj.ruleSets) return true;
   }
 }
 
@@ -94,7 +94,7 @@ class HumanPlayer extends Player {
 }
 
 class ComputerPlayer extends Player {
-  constructor(complexity) {
+  constructor(complexity = 0) {
     const moves = Object.keys(Player.ruleSets[complexity]);
     super("Computer", moves[Math.floor(Math.random() * moves.length)]);
   }
